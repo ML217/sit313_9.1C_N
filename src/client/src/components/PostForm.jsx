@@ -46,7 +46,6 @@ const PostForm = () => {
 
         <Segment>
           <strong>What do you want to ask or share</strong>
-          <p>This section is designed based on the type of the post. It is rendered conditionally.</p >
         </Segment>
 
         {postType === 'question' && (

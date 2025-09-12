@@ -7,6 +7,10 @@ import NewsletterSignup from './components/NewsletterSignup';
 import Footer from './components/Footer';
 import NewPost from './pages/NewPost';
 import PostForm from './components/PostForm';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import LoginSignupPage from './pages/Login';
+
 
 function App() {
  return (
@@ -28,6 +32,9 @@ function App() {
  } />
  
      <Route path="/post" element={<PostForm />} />
+     <Route path="/login" element={<Login/>} />
+     <Route path="/signup" element={< Signup/>} />
+
       </Routes>
 
        <Footer />
