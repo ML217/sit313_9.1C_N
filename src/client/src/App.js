@@ -10,6 +10,7 @@ import PostForm from './components/PostForm';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LoginSignupPage from './pages/Login';
+import SignOutButton from './components/SignOutButton'
 
 
 function App() {
@@ -31,9 +32,10 @@ function App() {
  </>
  } />
  
-     <Route path="/post" element={<PostForm />} />
+     <Route path="/post" element={<NewPost />} />
      <Route path="/login" element={<Login/>} />
      <Route path="/signup" element={< Signup/>} />
+     <Route path='/signout' element={< SignOutButton/>} />
 
       </Routes>
 
