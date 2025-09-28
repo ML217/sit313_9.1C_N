@@ -13,8 +13,8 @@ const Header = () => {
         <Link to="/login">
         <button>Login</button>
         </Link>
-        <Link to="/signout">
-        <button secondary>Signout</button>
+        <Link to="/premium">
+        <button>PricingPlans</button>
         </Link>
       </div>
     </div>

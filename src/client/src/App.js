@@ -11,6 +11,13 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import LoginSignupPage from './pages/Login';
 import SignOutButton from './components/SignOutButton'
+import Enroll2FA from './components/Enroll2FA';
+import LoginWithPhone from './pages/LoginWithPhone';
+import PricingPage from './pages/PricingPage';
+import PricingPlans from './pages/PricingPlans';
+import Success from './pages/Success';
+import Cancel from './pages/Cancel';
+
 
 
 function App() {
@@ -18,6 +25,7 @@ function App() {
    <Router>
      <div>
          <Header />
+         
            < img src="https://images.pexels.com/photos/1109541/pexels-photo-1109541.jpeg"
               alt="Banner"
               style={{ width: '100%' }}
@@ -29,6 +37,7 @@ function App() {
     <FeaturedArticles />
     <FeaturedTutorials />
     <NewsletterSignup />
+    <SignOutButton />
  </>
  } />
  
@@ -36,12 +45,18 @@ function App() {
      <Route path="/login" element={<Login/>} />
      <Route path="/signup" element={< Signup/>} />
      <Route path='/signout' element={< SignOutButton/>} />
-
+     <Route path='/Enroll2FA' element={< Enroll2FA/>} />
+     <Route path='/LoginWithPhone' element={< LoginWithPhone/>} />
+    <Route path='/Pricing' element={< PricingPage/>} />
+    <Route path='/success' element={< Success/>} />
+    <Route path='/cancel' element={< Cancel/>} />
+    <Route path='/Premium' element={< PricingPlans/>} />   
       </Routes>
 
        <Footer />
      </div>
    </Router>
+
  );
 }
 

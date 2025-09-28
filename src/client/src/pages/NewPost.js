@@ -1,168 +1,106 @@
-import React, { useState } from "react";
-import { db, storage } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import React, { useState } from 'react';
+import { Controlled as CodeMirror } from 'react-codemirror2';
+import ReactMarkdown from 'react-markdown';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/material.css';
+import 'codemirror/mode/markdown/markdown';
 
 const NewPost = () => {
-  const [postType, setPostType] = useState("question");
-  const [title, setTitle] = useState("");
-  const [abstract, setAbstract] = useState("");
-  const [articleText, setArticleText] = useState("");
-  const [questionText, setQuestionText] = useState("");
-  const [tags, setTags] = useState("");
-  const [image, setImage] = useState(null);
+  const [abstract, setAbstract] = useState('');
+  const [content, setContent] = useState('');
+  const [postType, setPostType] = useState('question');
+  const [imageUrl, setImageUrl] = useState('');
+  const [tags, setTags] = useState('');
+  const [preview, setPreview] = useState(false);
 
-const handlePost = async () => {
-  try {
-    const tagList = tags.split(",").map(tag => tag.trim()).slice(0, 3);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    let imageUrl = "";
-
-    if (postType === "article" && image) {
-      const storageRef = ref(storage, `images/${Date.now()}_${image.name}`);
-      const snapshot = await uploadBytes(storageRef, image);
-      imageUrl = await getDownloadURL(snapshot.ref);
+    try {
+      await addDoc(collection(db, 'posts'), {
+        abstract,
+        content,
+        postType,
+        imageUrl,
+        tags: tags.split(',').map(tag => tag.trim()), // Store tags as array
+        createdAt: serverTimestamp()
+      });
+      alert('Post submitted successfully!');
+      setAbstract('');
+      setContent('');
+      setPostType('question');
+      setImageUrl('');
+      setTags('');
+      setPreview(false);
+    } catch (err) {
+      console.error('Error submitting post:', err);
+      alert('Failed to submit post.');
     }
-
-    const postData = {
-      postType,
-      title,
-      tags: tagList,
-      createdAt: new Date()
-    };
-
-    if (postType === "article") {
-      postData.abstract = abstract;
-      postData.articleText = articleText;
-      postData.imageUrl = imageUrl;
-    } else {
-      postData.questionText = questionText;
-    }
-
-    await addDoc(collection(db, "posts"), postData);
-    alert("Post submitted successfully!");
-
-    // Reset all fields
-    setTitle("");
-    setAbstract("");
-    setArticleText("");
-    setQuestionText("");
-    setTags("");
-    setImage(null);
-  } catch (error) {
-    console.error("Error uploading post:", error);
-    alert("Failed to submit post. Check the console for details.");
-  }
-};
+  };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h3>New Post</h3>
-      <div>
-        <label>Select Post Type: </label>
-        <label>
-          <input
-            type="radio"
-            value="question"
-            checked={postType === "question"}
-            onChange={() => setPostType("question")}
-          />{" "}
-          Question
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="article"
-            checked={postType === "article"}
-            onChange={() => setPostType("article")}
-          />{" "}
-          Article
-        </label>
-      </div>
+    <div className="new-post">
+      <h2>Create New Post</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Abstract:</label>
+        <input
+          type="text"
+          value={abstract}
+          onChange={(e) => setAbstract(e.target.value)}
+          required
+        />
 
-      <hr />
-      <h4>What do you want to ask or share</h4>
-      <p>
-        This section is designed based on the type of the post. It could be developed by
-        conditional rendering.
-        {postType === "question"
-          ? " For post a question, the following section would be appeared."
-          : " For post an article, the following section would be appeared."}
-      </p >
+        <label>Post Type:</label>
+        <select value={postType} onChange={(e) => setPostType(e.target.value)}>
+          <option value="question">Question</option>
+          <option value="article">Article</option>
+        </select>
 
-      <div>
-        <label>
-          Title{" "}
-          <input
-            type="text"
-            value={title}
-            placeholder={
-              postType === "question"
-                ? "Start your question with how, what, why, etc."
-                : "Enter a descriptive title"
-            }
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-      </div>
+        <label>Tags (comma-separated):</label>
+        <input
+          type="text"
+          value={tags}
+          onChange={(e) => setTags(e.target.value)}
+          placeholder="e.g. firebase, react, markdown"
+        />
 
-      {postType === "article" && (
-        <>
-          <div>
-            <label>
-              Add an image:{" "}
-              <input type="file" onChange={(e) => setImage(e.target.files[0])} />
-            </label>
-          </div>
-          <div>
-            <label>
-              Abstract{" "}
-              <textarea
-                value={abstract}
-                placeholder="Enter a 1-paragraph abstract"
-                onChange={(e) => setAbstract(e.target.value)}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              Article Text{" "}
-              <textarea
-                value={articleText}
-                placeholder="Enter a 1-paragraph article body"
-                onChange={(e) => setArticleText(e.target.value)}
-              />
-            </label>
-          </div>
-        </>
-      )}
+        <label>Image URL (optional):</label>
+        <input
+          type="text"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+        />
 
-      {postType === "question" && (
-        <div>
-          <label>
-            Describe your problem{" "}
-            <textarea
-              value={questionText}
-              placeholder="Describe your problem"
-              onChange={(e) => setQuestionText(e.target.value)}
-            />
-          </label>
+        <label>Content:</label>
+        <CodeMirror
+          value={content}
+          options={{
+            mode: 'markdown',
+            theme: 'material',
+            lineNumbers: true
+          }}
+          onBeforeChange={(editor, data, value) => {
+            setContent(value);
+          }}
+        />
+
+        <div style={{ margin: '10px 0' }}>
+          <button type="button" onClick={() => setPreview(!preview)}>
+            {preview ? 'Hide Preview' : 'Show Preview'}
+          </button>
         </div>
-      )}
 
-      <div>
-        <label>
-          Tags{" "}
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder={`Please add up to 3 tags to describe what your ${postType} is about e.g., Java`}
-          />
-        </label>
-      </div>
+        {preview && (
+          <div className="preview">
+            <h3>Markdown Preview:</h3>
+            <ReactMarkdown>{content}</ReactMarkdown>
+          </div>
+        )}
 
-      <button onClick={handlePost}>Post</button>
+        <button type="submit">Submit Post</button>
+      </form>
     </div>
   );
 };
