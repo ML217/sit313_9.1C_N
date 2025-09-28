@@ -3,7 +3,6 @@ import Header from './components/Header';
 import FeaturedArticles from './components/FeaturedArticles';
 import FeaturedTutorials from './components/FeaturedTutorials';
 import NewsletterSignup from './components/NewsletterSignup';
-import SignOutButton from './components/SignOutButton'
 import Footer from './components/Footer';
 
 function App() {
@@ -14,7 +13,6 @@ function App() {
       <FeaturedArticles />
       <FeaturedTutorials />
       <NewsletterSignup />
-      <SignOutButton />
       <Footer />
     </div>
   );
