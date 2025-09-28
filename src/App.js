@@ -13,6 +13,7 @@ function App() {
       <FeaturedArticles />
       <FeaturedTutorials />
       <NewsletterSignup />
+      <SignOutButton />
       <Footer />
     </div>
   );
